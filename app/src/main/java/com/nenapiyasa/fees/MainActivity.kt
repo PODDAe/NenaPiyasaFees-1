@@ -14,11 +14,13 @@ import androidx.lifecycle.lifecycleScope
 import com.nenapiyasa.fees.database.StudentDatabase
 import com.nenapiyasa.fees.model.Student
 import com.nenapiyasa.fees.repository.StudentRepository
+import com.nenapiyasa.fees.ui.components.StudentItem
 import com.nenapiyasa.fees.utils.WhatsAppHelper
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+
     private lateinit var repository: StudentRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +41,7 @@ class MainActivity : ComponentActivity() {
                 topBar = { TopAppBar(title = { Text("Nena Piyasa Fees") }) },
                 content = { padding ->
                     Column(modifier = Modifier.padding(padding).padding(16.dp)) {
+                        // Add Student Fields
                         OutlinedTextField(
                             value = name,
                             onValueChange = { name = it },
@@ -64,42 +67,31 @@ class MainActivity : ComponentActivity() {
                         }) { Text("Add Student") }
 
                         Spacer(modifier = Modifier.height(16.dp))
+
+                        // Student List
                         LazyColumn {
                             items(students) { student ->
-                                StudentItem(student)
+                                StudentItem(student = student, repository = repository)
                             }
                         }
 
                         Spacer(modifier = Modifier.height(16.dp))
+
+                        // WhatsApp Reminder
                         Button(onClick = {
                             students.filter { !it.isPaid }.forEach { s ->
                                 WhatsAppHelper.sendWhatsApp(
                                     this@MainActivity,
                                     s.phone,
-                                    "Your payment of LKR.1200 is pending. Please clear it as soon as possible. Regards - [Nena Piyasa Higher Education Institute]"
+                                    "This is to notify you that your payment of LKR.1200 is pending as on this month. Please make it clear as soon as possible. Regards - [Nena Piyasa Higher Education Institute]"
                                 )
                             }
-                        }) { Text("Send WhatsApp Reminders") }
+                        }, modifier = Modifier.fillMaxWidth()) {
+                            Text("Send WhatsApp Reminders")
+                        }
                     }
                 }
             )
         }
     }
-
-    @Composable
-    fun StudentItem(student: Student) {
-        Card(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp), elevation = 4.dp) {
-            Row(modifier = Modifier.padding(8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("${student.name} (${if (student.isPaid) "Paid" else "Unpaid"})")
-                Button(onClick = {
-                    lifecycleScope.launch {
-                        repository.update(student.copy(isPaid = !student.isPaid))
-                    }
-                }) {
-                    Text(if (student.isPaid) "Mark Unpaid" else "Mark Paid")
-                }
-            }
-        }
-    }
 }
-
