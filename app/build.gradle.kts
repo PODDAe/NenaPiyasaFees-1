@@ -1,14 +1,7 @@
 plugins {
-    id("com.android.application") version "8.3.0" apply false
-    kotlin("android") version "1.9.0" apply false
-    kotlin("kapt") version "1.9.0" apply false
-}
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
+    id("com.android.application")
+    kotlin("android")
+    kotlin("kapt")
 }
 
 android {
@@ -43,10 +36,13 @@ dependencies {
     implementation("androidx.compose.ui:ui:1.6.0")
     implementation("androidx.compose.material:material:1.6.0")
     implementation("androidx.compose.ui:ui-tooling-preview:1.6.0")
+
+    // Room
     implementation("androidx.room:room-runtime:2.6.0")
     kapt("androidx.room:room-compiler:2.6.0")
     implementation("androidx.room:room-ktx:2.6.0")
+
+    // Apache POI for Excel
     implementation("org.apache.poi:poi:5.2.3")
     implementation("org.apache.poi:poi-ooxml:5.2.3")
 }
-
