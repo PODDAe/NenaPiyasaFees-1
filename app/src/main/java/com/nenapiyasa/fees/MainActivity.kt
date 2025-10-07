@@ -95,3 +95,24 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+// Existing “Send WhatsApp Reminders” button…
+Button(
+    onClick = {
+        students.filter { !it.isPaid }.forEach { s ->
+            WhatsAppHelper.sendWhatsApp(
+                this@MainActivity,
+                s.phone,
+                "This is to notify you that your payment of LKR.1200 is pending as on this month. Please make it clear as soon as possible. Regards - [Nena Piyasa Higher Education Institute]"
+            )
+        }
+    },
+    modifier = Modifier.fillMaxWidth()
+) {
+    Text("Send WhatsApp Reminders")
+}
+
+Spacer(modifier = Modifier.height(12.dp))
+
+// New Export/Import buttons
+ExportImportScreen(repository = repository)
+
